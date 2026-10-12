@@ -1,19 +1,31 @@
-# robots.txt — Carnet de Potager PWA
+# robots.txt
 User-agent: *
 Allow: /
 
-# Crawlers IA : Décisions motivées par robot
+# Crawlers d'IA : une decision par robot, avec sa raison en commentaire
 User-agent: GPTBot
-Allow: /            # Le carnet de potager et ses fiches publiques gagnent à être cités par OpenAI
+Allow: /            # Le carnet de potager et ses fiches publiques gagnent a etre cites par OpenAI
 
 User-agent: ClaudeBot
-Allow: /            # Accès autorisé pour consultation et citation des fiches de culture potagère
+Allow: /            # Acces autorise pour consultation et citation des fiches de culture
 
 User-agent: Google-Extended
-Disallow: /         # Pas d'entraînement direct des modèles Gemini sans opt-in explicite ; la recherche Google reste autorisée
+Disallow: /         # Pas d'entrainement direct des modeles Gemini sans accord explicite
 
 User-agent: CCBot
-Disallow: /         # Limitation du moissonnage massif non qualifié (Common Crawl)
+Disallow: /         # Limitation du moissonnage massif non qualifie Common Crawl
+
+User-agent: Applebot-Extended
+Disallow: /         # Pas d'entrainement direct pour Apple Intelligence
+
+User-agent: PerplexityBot
+Disallow: /         # Pas d'indexation automatisee par Perplexity
+
+User-agent: Bytespider
+Disallow: /         # Pas de scraping par les robots ByteDance
+
+User-agent: cohere-ai
+Disallow: /         # Pas d'entrainement par Cohere
 
 Sitemap: https://carnetdepotager.vercel.app/sitemap.xml
 # llms.txt : https://carnetdepotager.vercel.app/llms.txt
