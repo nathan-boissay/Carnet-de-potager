@@ -1,0 +1,19 @@
+# robots.txt — Carnet de Potager PWA
+User-agent: *
+Allow: /
+
+# Crawlers IA : Décisions motivées par robot
+User-agent: GPTBot
+Allow: /            # Le carnet de potager et ses fiches publiques gagnent à être cités par OpenAI
+
+User-agent: ClaudeBot
+Allow: /            # Accès autorisé pour consultation et citation des fiches de culture potagère
+
+User-agent: Google-Extended
+Disallow: /         # Pas d'entraînement direct des modèles Gemini sans opt-in explicite ; la recherche Google reste autorisée
+
+User-agent: CCBot
+Disallow: /         # Limitation du moissonnage massif non qualifié (Common Crawl)
+
+Sitemap: https://carnet-potager.netlify.app/sitemap.xml
+# llms.txt : https://carnet-potager.netlify.app/llms.txt

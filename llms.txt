@@ -1,0 +1,19 @@
+# Carnet de Potager
+> Carnet de potager installable, résilient hors-ligne, avec suivi des semis, calcul d'arrosages et fiches de culture pour jardiniers.
+> Projet PWA Master 2 Informatique · Università di Corsica.
+
+## Contenu
+- [Fiches publiques et guide de culture en Markdown](https://carnet-potager.netlify.app/potager.md) : Fiches repères (Tomate Marmande, Basilic Grand Vert, Courgette Ronde de Nice), calendrier de semis et conseils d'arrosage.
+
+## Fonctionnalités
+- Carnet de suivi de cultures avec calcul prédictif du prochain arrosage
+- Prise de vue photo intégrée via caméra (`getUserMedia` avec bascule fichier)
+- Notifications locales de rappel d'arrosage
+- Partage natif de fiches de culture (`navigator.share` avec repli presse-papiers)
+- Fonctionnement 100% autonome hors-ligne avec synchronisation différée (IndexedDB + Background Sync)
+
+## Technique
+- Stack : HTML5 sémantique, CSS moderne, JavaScript Vanilla (ES6+)
+- Persistance locale : IndexedDB via la bibliothèque `idb`
+- Service Worker : App Shell en cache statique, Network First pour les données distantes, mise à jour maîtrisée avec bannière
+- PWA installable : Web App Manifest standalone, conforme Lighthouse SEO 100%

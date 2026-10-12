@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carnet de Potager — Suivi de cultures et fiches de jardinage</title>
+  <meta name="description" content="Carnet de potager installable et résilient hors-ligne. Suivez vos semis, calculez vos arrosages et consultez des fiches de culture fiables.">
+
+  <!-- SEO, canonical & alternative Markdown pour agents IA -->
+  <link rel="canonical" href="https://carnet-potager.netlify.app/">
+  <link rel="alternate" type="text/markdown" href="/potager.md">
+
+  <!-- PWA Web App Manifest & Thèmes -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Open Graph / Réseaux sociaux -->
+  <meta property="og:title" content="Carnet de Potager — Suivi de cultures et fiches de jardinage">
+  <meta property="og:description" content="Application de suivi de potager installable, résiliente hors-ligne avec alertes d'arrosage et fiches guides.">
+  <meta property="og:image" content="https://carnet-potager.netlify.app/icons/icon-512.png">
+  <meta property="og:url" content="https://carnet-potager.netlify.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+
+  <!-- Données structurées Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Carnet de Potager",
+    "url": "https://carnet-potager.netlify.app/",
+    "description": "Carnet de potager installable et résilient hors-ligne pour suivre vos semis, arrosages et fiches de culture.",
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+  <!-- Librairie IndexedDB idb v8 -->
+  <script src="https://cdn.jsdelivr.net/npm/idb@8/build/umd.js"></script>
+  <style>[hidden] { display: none !important; }</style>
+  <script defer src="app.js"></script>
+</head>
+<body>
+
+  <!-- Bannière interactive de mise à jour (Service Worker updatefound) -->
+  <aside id="update-banner" class="banner banner-update" style="display: none;" hidden aria-live="polite">
+    <div class="banner-content">
+      <span class="banner-icon">🌱</span>
+      <p>Une nouvelle version du Carnet de Potager est disponible !</p>
+    </div>
+    <button type="button" id="update-btn" class="btn btn-sm btn-light">Mettre à jour</button>
+  </aside>
+
+  <!-- Bannière d'état réseau hors-ligne -->
+  <aside id="offline-indicator" class="banner banner-offline" style="display: none;" hidden aria-live="polite">
+    <div class="banner-content">
+      <span class="banner-icon">📡</span>
+      <p>Mode hors-ligne actif. Vos fiches sont enregistrées localement et seront synchronisées au retour du réseau.</p>
+    </div>
+  </aside>
+
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+        <h1>🌱 Carnet de Potager</h1>
+        <p class="subtitle">Guide écologique et suivi de vos semis, arrosages et récoltes en pleine terre ou en balcon.</p>
+      </div>
+
+      <div class="header-actions">
+        <!-- Bouton d'installation PWA déclenché par beforeinstallprompt -->
+        <button type="button" id="install-btn" class="btn btn-accent" style="display: none;" hidden>
+          📲 Installer l'application
+        </button>
+
+        <!-- Activation des notifications d'arrosage locales -->
+        <button type="button" id="notif-btn" class="btn btn-outline" title="Recevoir des alertes d'arrosage">
+          🔔 Alertes d'arrosage
+        </button>
+
+        <span id="sync-badge" class="badge badge-online" aria-label="Statut de connexion">
+          🟢 En ligne
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- Section Formulaire : Ajouter une nouvelle plante -->
+    <section class="card form-card" aria-labelledby="form-heading">
+      <h2 id="form-heading">🌿 Ajouter une plante au carnet</h2>
+      <form id="plant-form" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="plant-name">Nom de la plante *</label>
+            <input type="text" id="plant-name" name="name" required placeholder="Ex: Fraisier Gariguette, Carotte de Chantenay...">
+          </div>
+
+          <div class="form-group">
+            <label for="plant-category">Variété / Famille</label>
+            <input type="text" id="plant-category" name="category" placeholder="Ex: Fruitier, Solanacée, Aromate...">
+          </div>
+
+          <div class="form-group">
+            <label for="plant-date">Date de semis / plantation *</label>
+            <input type="date" id="plant-date" name="plantedAt" required>
+          </div>
+
+          <div class="form-group">
+            <label for="plant-interval">Fréquence d'arrosage (en jours) *</label>
+            <input type="number" id="plant-interval" name="waterInterval" min="1" max="60" value="3" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="plant-notes">Conseils & notes de suivi</label>
+          <textarea id="plant-notes" name="notes" rows="3" placeholder="Emplacement ensoleillé, paillage, purin d'ortie..."></textarea>
+        </div>
+
+        <!-- Prise de vue : getUserMedia avec repli file capture -->
+        <div class="camera-section">
+          <label class="section-label">Photo de la plante</label>
+          <div class="camera-actions">
+            <button type="button" id="camera-btn" class="btn btn-outline">
+              📷 Prendre une photo
+            </button>
+            <input type="file" id="file-input" accept="image/*" capture="environment" hidden>
+            <span id="camera-fallback-msg" class="hint-text">Vous pouvez aussi choisir un fichier depuis votre galerie.</span>
+          </div>
+
+          <!-- Fenêtre de capture directe par flux vidéo WebRTC -->
+          <div id="camera-modal" class="camera-modal" hidden>
+            <video id="camera-video" playsinline autoplay muted></video>
+            <div class="camera-controls">
+              <button type="button" id="snap-btn" class="btn btn-primary">📸 Capturer</button>
+              <button type="button" id="close-camera-btn" class="btn btn-outline">Annuler</button>
+            </div>
+            <canvas id="camera-canvas" hidden></canvas>
+          </div>
+
+          <!-- Aperçu de la photo sélectionnée -->
+          <div id="photo-preview-wrap" class="photo-preview-wrap" hidden>
+            <img id="photo-preview" src="" alt="Aperçu de la plante sélectionnée">
+            <button type="button" id="remove-photo-btn" class="btn btn-sm btn-danger">Supprimer la photo</button>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button type="submit" id="submit-btn" class="btn btn-primary">
+            🌱 Enregistrer la plante
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Section Liste & Fiches repères publiques pour SEO et Robots -->
+    <section class="plants-section" aria-labelledby="plants-heading">
+      <div class="section-header">
+        <h2 id="plants-heading">🌾 Fiches de culture & Suivi du potager</h2>
+        <span id="plants-count" class="counter-badge">3 plantes enregistrées</span>
+      </div>
+
+      <ul id="plants-list" class="plants-grid">
+        <!-- 3 fiches repères d'exemple sous balises li data-seed pour les robots et SEO -->
+        <li class="plant-card" data-seed data-id="seed-1">
+          <div class="card-header">
+            <div>
+              <h3 class="plant-title">Tomate Marmande</h3>
+              <span class="category-tag">Solanacée</span>
+            </div>
+            <span class="water-badge">Arrosage : tous les 3j</span>
+          </div>
+          <div class="card-body">
+            <p class="plant-info"><strong>Date de plantation :</strong> 15 mars 2026</p>
+            <p class="plant-info"><strong>Prochain arrosage estimé :</strong> <span class="next-water">À surveiller</span></p>
+            <p class="plant-notes">Sol riche et exposition plein soleil. Pailler généreusement au pied pour préserver l'humidité sans mouiller les feuilles.</p>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn btn-sm btn-water" data-action="water" data-id="seed-1">💧 Arroser aujourd'hui</button>
+            <button type="button" class="btn btn-sm btn-share" data-action="share" data-id="seed-1" title="Partager cette fiche">🔗 Partager</button>
+          </div>
+        </li>
+
+        <li class="plant-card" data-seed data-id="seed-2">
+          <div class="card-header">
+            <div>
+              <h3 class="plant-title">Basilic Grand Vert</h3>
+              <span class="category-tag">Aromatique</span>
+            </div>
+            <span class="water-badge">Arrosage : tous les 2j</span>
+          </div>
+          <div class="card-body">
+            <p class="plant-info"><strong>Date de plantation :</strong> 10 avril 2026</p>
+            <p class="plant-info"><strong>Prochain arrosage estimé :</strong> <span class="next-water">À surveiller</span></p>
+            <p class="plant-notes">Aime la chaleur et une exposition mi-ombre. Pincer l'extrémité des tiges pour stimuler de nouvelles feuilles et retarder la floraison.</p>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn btn-sm btn-water" data-action="water" data-id="seed-2">💧 Arroser aujourd'hui</button>
+            <button type="button" class="btn btn-sm btn-share" data-action="share" data-id="seed-2" title="Partager cette fiche">🔗 Partager</button>
+          </div>
+        </li>
+
+        <li class="plant-card" data-seed data-id="seed-3">
+          <div class="card-header">
+            <div>
+              <h3 class="plant-title">Courgette Ronde de Nice</h3>
+              <span class="category-tag">Cucurbitacée</span>
+            </div>
+            <span class="water-badge">Arrosage : tous les 4j</span>
+          </div>
+          <div class="card-body">
+            <p class="plant-info"><strong>Date de plantation :</strong> 20 avril 2026</p>
+            <p class="plant-info"><strong>Prochain arrosage estimé :</strong> <span class="next-water">À surveiller</span></p>
+            <p class="plant-notes">Plante non coureuse très productive en plein soleil. Apport de compost mûr requis et arrosage régulier et abondant.</p>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn btn-sm btn-water" data-action="water" data-id="seed-3">💧 Arroser aujourd'hui</button>
+            <button type="button" class="btn btn-sm btn-share" data-action="share" data-id="seed-3" title="Partager cette fiche">🔗 Partager</button>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Message toast temporaire d'information / feedback -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <p>🌱 <strong>Carnet de Potager</strong> — PWA résiliente, conçue pour un jardinage autonome et durable.</p>
+      <nav class="footer-nav" aria-label="Liens techniques et découverte">
+        <a href="potager.md">Jumelle Markdown (potager.md)</a>
+        <span>·</span>
+        <a href="llms.txt">llms.txt</a>
+        <span>·</span>
+        <a href="sitemap.xml">sitemap.xml</a>
+        <span>·</span>
+        <a href="robots.txt">robots.txt</a>
+        <span>·</span>
+        <a href="manifest.json">manifest.json</a>
+      </nav>
+      <p class="credits">TP PWA Master 2 Informatique · Università di Corsica</p>
+    </div>
+  </footer>
+
+</body>
+</html>

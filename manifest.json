@@ -1,0 +1,27 @@
+{
+  "name": "Carnet de Potager — Guide & Suivi",
+  "short_name": "Potager",
+  "description": "Carnet de potager résilient hors-ligne pour suivre vos semis, arrosages et récoltes avec fiches de culture.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f4f8f3",
+  "theme_color": "#2e7d32",
+  "categories": ["lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
