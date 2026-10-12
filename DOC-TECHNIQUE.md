@@ -1,6 +1,6 @@
 # Carnet de Potager — Technical Design Doc
 
-Nathan · 12 octobre 2026 · URL de production : `https://carnet-potager.netlify.app/` · Dépôt : `https://github.com/Harpalionu2A/cours-pwa-m2` · Statut : Final
+Nathan · 12 octobre 2026 · URL de production : `https://carnetdepotager.vercel.app/` · Dépôt : `https://github.com/nathan-boissay/Carnet-de-potager` · Statut : Final
 
 ---
 
@@ -144,3 +144,4 @@ Carnet de Potager est une PWA installable et résiliente hors-ligne dédiée aux
 - **Évolutions futures (v2)** :
   - Module de météo locale pour décaler automatiquement les arrosages en cas de pluie annoncée.
   - Export et import des données au format JSON / CSV pour sauvegarde externe.
+

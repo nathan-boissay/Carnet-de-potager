@@ -15,5 +15,5 @@ Disallow: /         # Pas d'entraînement direct des modèles Gemini sans opt-in
 User-agent: CCBot
 Disallow: /         # Limitation du moissonnage massif non qualifié (Common Crawl)
 
-Sitemap: https://carnet-potager.netlify.app/sitemap.xml
-# llms.txt : https://carnet-potager.netlify.app/llms.txt
+Sitemap: https://carnetdepotager.vercel.app/sitemap.xml
+# llms.txt : https://carnetdepotager.vercel.app/llms.txt

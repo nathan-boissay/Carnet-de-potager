@@ -2,6 +2,8 @@
 
 > Application web progressive installable et résiliente hors-ligne pour la gestion des semis, le calcul d'arrosages et le partage de fiches de culture potagère.
 > Projet développé dans le cadre du cours PWA — Master 2 Informatique · Università di Corsica.
+> 
+> 🌐 **Application déployée :** [https://carnetdepotager.vercel.app/](https://carnetdepotager.vercel.app/)
 
 ---
 

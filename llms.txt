@@ -3,7 +3,7 @@
 > Projet PWA Master 2 Informatique · Università di Corsica.
 
 ## Contenu
-- [Fiches publiques et guide de culture en Markdown](https://carnet-potager.netlify.app/potager.md) : Fiches repères (Tomate Marmande, Basilic Grand Vert, Courgette Ronde de Nice), calendrier de semis et conseils d'arrosage.
+- [Fiches publiques et guide de culture en Markdown](https://carnetdepotager.vercel.app/potager.md) : Fiches repères (Tomate Marmande, Basilic Grand Vert, Courgette Ronde de Nice), calendrier de semis et conseils d'arrosage.
 
 ## Fonctionnalités
 - Carnet de suivi de cultures avec calcul prédictif du prochain arrosage
