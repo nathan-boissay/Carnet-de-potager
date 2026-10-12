@@ -4,7 +4,7 @@
 // Fallback hors-ligne (offline.html) et Background Sync.
 // ==========================================================================
 
-const CACHE_NAME = "potager-v2";
+const CACHE_NAME = "potager-v3";
 
 const STATIC_ASSETS = [
   "/",
